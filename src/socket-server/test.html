@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket</title>
+</head>
+<body>
+<div id="text"></div>
+<div id="log"></div>
+<script src="https://cdn.socket.io/3.1.1/socket.io.min.js"></script>
+<script>
+    // Подключаем блок для вывода текста
+    let text = document.getElementById("text");
+    let log = document.getElementById("log");
+    // Подключаемся к серверу
+    // let socket = io('http://192.168.100.7:8181', {namespace: 'wsio'})
+    let socket = io('http://127.0.0.1:8181', {path: '/vehicleMonitor/socket.io'});
+    // let socket = io('https://crm.mobility.hyundai.ru/wsio');
+    // let socket = io('https://mihsastv.online/vehicleMonitor', {path: '/vehicleMonitor/socket.io'});
+    // let socket = io('https://devapi.mobility.hyundai.ru/vehicleMonitor', {path: '/vehicleMonitor/socket.io'});
+    // Отслеживаем подключение
+    socket.on('connect', function () {
+        // Выводим сообщение подключение
+        text.innerHTML = "Подключение прошло успешно<br>"
+        // Отслеживание сообщения от сервера со заголовком 'hello'
+        socket.emit('login', {token: 'testToken', event: 'testevent2020'});
+        socket.on('testevent2020', function (data) {
+            // Выводим сообщение от сервера
+            text.innerHTML += "Сервер: " + JSON.stringify(data) + "<br>"
+        });
+        socket.on('disconnect', (reason) => {
+            log.innerHTML = `Оключено ${reason}<br>`
+            console.log(reason);
+            // else the socket will automatically try to reconnect
+        });
+    });
+</script>
+</body>
+</html>
